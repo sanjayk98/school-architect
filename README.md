@@ -1,65 +1,49 @@
 # 🏫 School Architect
 
-> **A Domain-Driven Design (DDD) system for K-12 school configuration with AI-powered automation**
+**School Architect** is a production-ready school management system built with **Domain-Driven Design (DDD)** principles. It provides a comprehensive suite for K-12 school configuration, featuring AI-powered automation and a modern tech stack.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## 🚀 Project Components
 
-School Architect is a production-ready school management system built with Domain-Driven Design principles.
+The repository is organized into several key modules:
 
-## ✨ Features
+| Component | Technology Stack | Description |
+| :--- | :--- | :--- |
+| **Backend** | Java 17, Spring Boot 3.2, JPA | Core business logic following DDD patterns. |
+| **Database** | PostgreSQL 15, pgvector | Relational storage with semantic search capabilities. |
+| **Mobile** | React Native, Expo, TypeScript | Cross-platform mobile application for school management. |
+| **AI Agent** | Python 3.10+, Claude (Anthropic) | Intelligent configuration agent for automated setup. |
+| **Infrastructure** | Docker, Docker Compose | Containerized environment for easy local deployment. |
 
-- 🎯 Hub-and-Spoke Aggregates with BatchId, SiteId, GradeId
-- 🔒 Database-enforced domain invariants
-- 🤖 Claude AI-powered configuration agent
-- 📊 PostgreSQL + pgvector for semantic search
-- ⚡ Event-driven architecture
-- 📱 React Native mobile + React web
+## ✨ Key Features
 
-## 🚀 Quick Start
+- **DDD Architecture**: Hub-and-Spoke aggregates with strict domain invariants.
+- **AI Integration**: Claude-powered agent for complex school configurations.
+- **Semantic Search**: Leveraging `pgvector` for intelligent data retrieval.
+- **Event-Driven**: Built-in support for asynchronous event processing.
+- **Cross-Platform**: Unified experience across web and mobile.
+
+## 🛠️ Quick Start
 
 ### Prerequisites
-- Java 17+, Node.js 18+, PostgreSQL 15+, Python 3.10+
+- Java 17+, Node.js 18+, Python 3.10+, Docker & Docker Compose.
 
-### Installation
-
-```bash
-# 1. Start database
-cd backend
-docker-compose up -d postgres
-
-# 2. Run migrations
-cd ../database && ./scripts/setup.sh
-
-# 3. Start backend
-cd ../backend && ./mvnw spring-boot:run
-
-# 4. Start mobile app
-cd ../mobile && npm install && npx expo start
-
-# 5. Run AI agent
-cd ../ai-agent
-pip install -r requirements.txt
-export ANTHROPIC_API_KEY=your_key
-python examples/basic_setup.py
-```
-
-## 📖 Documentation
-
-- [Architecture](./docs/architecture/)
-- [API Reference](./docs/api/)
-- [Database Schema](./database/README.md)
-
-## 🛠️ Technology Stack
-
-- **Backend**: Java 17 + Spring Boot 3.2
-- **Database**: PostgreSQL 15 + pgvector
-- **Frontend**: TypeScript + React Native/Expo
-- **AI**: Claude Sonnet 4 (Anthropic)
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+### Local Setup
+1. **Spin up Infrastructure**:
+   ```bash
+   docker-compose up -d
+   ```
+2. **Initialize Database**:
+   ```bash
+   cd database/scripts && ./setup.sh
+   ```
+3. **Run Backend**:
+   ```bash
+   cd backend && ./mvnw spring-boot:run
+   ```
+4. **Launch Mobile App**:
+   ```bash
+   cd mobile && npm install && npx expo start
+   ```
 
 ## 📄 License
-
-MIT License - see [LICENSE](./LICENSE)
+This project is licensed under the **MIT License**.
