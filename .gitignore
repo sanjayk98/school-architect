@@ -1,0 +1,41 @@
+# Java/Maven
+backend/target/
+backend/*.jar
+backend/*.class
+backend/.settings/
+backend/.project
+backend/.classpath
+
+# Node.js
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+web-demo/node_modules/
+web-demo/dist/
+*.log
+
+# Python
+ai-agent/__pycache__/
+ai-agent/*.pyc
+ai-agent/venv/
+ai-agent/.pytest_cache/
+ai-agent/.coverage
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Environment
+.env
+.env.local
+*.env
+
+# Build artifacts
+*.tar.gz
+*.zip
+
+# Database
+database/*.dump
+*.db
