@@ -1,0 +1,154 @@
+[
+  {
+    "name": "query_reasoning_sidecar_find_teacher",
+    "description": "Query the Reasoning Sidecar (graph + vector RAG) to find teachers suitable for a specific grade, subject, and site, with optional soft constraints like certifications and experience. Read-only; no side effects.",
+    "input_schema": {
+      "type": "object",
+      "required": ["gradeId"],
+      "properties": {
+        "gradeId": { "type": "string", "description": "Target grade identifier (e.g., Grade 1)." },
+        "subjectId": { "type": "string", "description": "Optional subject identifier.", "nullable": true },
+        "siteId": { "type": "string", "description": "Optional site or campus identifier.", "nullable": true },
+        "minExperienceYears": { "type": "number", "description": "Optional minimum years of teaching experience.", "nullable": true },
+        "requiredCertifications": { "type": "array", "description": "Optional list of certification IDs.", "items": { "type": "string" }, "nullable": true },
+        "maxResults": { "type": "integer", "description": "Max candidates to return.", "default": 5, "minimum": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "configure_offering",
+    "description": "Create a new InstructionalOffering aggregate. Side effect: generates a new offering UUID, persists to write-side store, and writes an audit log entry.",
+    "input_schema": {
+      "type": "object",
+      "required": ["batchId", "siteId", "gradeId", "feeAmount", "feeCurrency", "totalCapacity"],
+      "properties": {
+        "batchId": { "type": "string", "description": "Existing batch identifier." },
+        "siteId": { "type": "string", "description": "Existing school site identifier." },
+        "gradeId": { "type": "string", "description": "Existing grade identifier." },
+        "feeAmount": { "type": "string", "description": "Fee amount as a decimal string." },
+        "feeCurrency": { "type": "string", "description": "ISO 4217 currency code." },
+        "totalCapacity": { "type": "integer", "minimum": 0, "description": "Total max enrollment capacity." }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "add_section",
+    "description": "Add a Section to an existing InstructionalOffering. Side effect: enforces capacity, creates Section, publishes SectionCreatedEvent, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["offeringId", "label", "capacity"],
+      "properties": {
+        "offeringId": { "type": "string", "description": "Existing InstructionalOffering identifier." },
+        "label": { "type": "string", "description": "Human-friendly section label." },
+        "capacity": { "type": "integer", "minimum": 1, "description": "Max students for this section." }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "assign_staff",
+    "description": "Assign a staff member to a Section. Side effect: validates eligibility, persists StaffAssignment, publishes StaffAssignedEvent, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["sectionId", "userId", "role", "complianceStatus"],
+      "properties": {
+        "sectionId": { "type": "string", "description": "Existing Section identifier." },
+        "userId": { "type": "string", "description": "User identifier for the staff member." },
+        "role": { "type": "string", "description": "Role (e.g., 'TEACHER', 'VOLUNTEER')." },
+        "complianceStatus": { "type": "string", "description": "Compliance status (e.g., 'CLEARED', 'PENDING')." }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "create_batch",
+    "description": "Create a new AcademicBatch. Side effect: instantiates batch aggregate, persists it, publishes BatchCreatedEvent, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["year"],
+      "properties": {
+        "year": { "type": "integer", "description": "Academic year (e.g., 2026)." }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "define_calendar",
+    "description": "Define or overwrite academic calendar weeks for a batch. Side effect: updates internal week definitions, persists batch, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["batchId", "weeks"],
+      "properties": {
+        "batchId": { "type": "string", "description": "Existing batch identifier." },
+        "weeks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["weekNumber", "weekType", "rangeStart", "rangeEnd", "isTestWeek", "weekName", "termNumber", "isFinalAssessmentWeek"],
+            "properties": {
+              "weekNumber": { "type": "integer" },
+              "weekType": { "type": "string" },
+              "rangeStart": { "type": "string", "format": "date" },
+              "rangeEnd": { "type": "string", "format": "date" },
+              "isTestWeek": { "type": "boolean" },
+              "weekName": { "type": "string" },
+              "termNumber": { "type": "integer" },
+              "isFinalAssessmentWeek": { "type": "boolean" }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "register_site",
+    "description": "Register a new SchoolSite. Side effect: creates site aggregate, persists it, publishes SiteRegisteredEvent, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["name", "addressLine1", "city", "state", "postalCode", "country", "isOnline", "paymentConfigJson"],
+      "properties": {
+        "name": { "type": "string" },
+        "addressLine1": { "type": "string" },
+        "addressLine2": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "postalCode": { "type": "string" },
+        "country": { "type": "string" },
+        "isOnline": { "type": "boolean" },
+        "paymentConfigJson": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "set_online_status",
+    "description": "Toggle online/offline status of a SchoolSite. Side effect: updates online flag, persists site, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["siteId", "isOnline"],
+      "properties": {
+        "siteId": { "type": "string" },
+        "isOnline": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "add_external_school",
+    "description": "Add an external school reference. Side effect: creates ExternalSchool aggregate, persists it, publishes ExternalSchoolAddedEvent, and writes to audit log.",
+    "input_schema": {
+      "type": "object",
+      "required": ["name", "city", "state", "schoolType"],
+      "properties": {
+        "name": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "schoolType": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+]
